@@ -21,6 +21,7 @@ Well now it's been a while and you want to see if anyone is tagging their VMs in
 4. If the specified tag name is not found, then the VM name together with the names of the Resource Group and the Subscription (in which the VM is a member of) will be placed in an Azure Storage Table. 
 
 > **Note:** 
+
 > The script will create an Azure storage table for you every time it is executed. You just need to provide a Storage Account name ($storageAccount),  a Resource Group name in which the Storage Account is stored ($GovResourceGroup), and of course a Subscription name ($GovSubsName) which the Storage Account is created in. 
 
 So here is the code:
@@ -65,4 +66,5 @@ $subsvar | ForEach-Object {
 You can use this script to look for any other tag names. You just need to change it a little bit. You can also change this script a little bit and put it into an Automation Runbook and get daily/weekly/monthly reports. 
 
 > **How do I download the report?** 
+
 > To download the table content you just need to install "Azure Storage Explorer" from the link here. Enter the Access Key and the Storage Account name which you get from the portal and connect to it and then see the table under the Tables. 
