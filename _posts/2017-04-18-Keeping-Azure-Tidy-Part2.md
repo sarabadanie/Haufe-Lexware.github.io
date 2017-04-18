@@ -9,7 +9,7 @@ author_email: esmaeil.sarabadani@haufe-lexware.com
 header-img: "images/bg-post.jpg"
 ---
 
-For those who have read my first blog post "Keeping our Azure Cloud Tidy - Part 1", this is going to be a second part which is going to be as useful. If this is your first time here, you might want to have a look at the part 1 too, but even without reading it you will find this article useful. 
+For those who have read my first blog post "[Keeping our Azure Cloud Tidy - Part 1]", this is going to be a second part which is going to be as useful. If this is your first time here, you might want to have a look at the part 1 too, but even without reading it you will find this article useful. 
 
 When you have too many resources in the cloud having the right tagging strategy could help in better organization and more efficient cost usage. In the previous post I explained how to tag your Virtual Machines on Azure to shut down/start them according to a time frame. 
 
@@ -21,7 +21,6 @@ Well now it's been a while and you want to see if anyone is tagging their VMs in
 4. If the specified tag name is not found, then the VM name together with the names of the Resource Group and the Subscription (in which the VM is a member of) will be placed in an Azure Storage Table. 
 
 > **Note:** 
-
 > The script will create an Azure storage table for you every time it is executed. You just need to provide a Storage Account name ($storageAccount),  a Resource Group name in which the Storage Account is stored ($GovResourceGroup), and of course a Subscription name ($GovSubsName) which the Storage Account is created in. 
 
 So here is the code:
@@ -66,5 +65,7 @@ $subsvar | ForEach-Object {
 You can use this script to look for any other tag names. You just need to change it a little bit. You can also change this script a little bit and put it into an Automation Runbook and get daily/weekly/monthly reports. 
 
 > **How do I download the report?** 
+> To download the table content you just need to install "Azure Storage Explorer" from the link [here]. Enter the Access Key and the Storage Account name which you get from the portal and connect to it and then see the table under the Tables. 
 
-> To download the table content you just need to install "Azure Storage Explorer" from the link here. Enter the Access Key and the Storage Account name which you get from the portal and connect to it and then see the table under the Tables. 
+[Keeping our Azure Cloud Tidy - Part 1]: <http://dev.haufe.com/Automatic-Shutdown-and-Start-VMs/>
+[here]: <http://storageexplorer.com/>
