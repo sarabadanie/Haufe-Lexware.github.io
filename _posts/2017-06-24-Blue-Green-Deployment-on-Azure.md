@@ -21,4 +21,4 @@ Instead Microsoft suggests the use of Azure Resource Manager (ARM) API but what 
 
 ### Blue-Green Architecture on Azure Resource Manager
 
-![Architecture]({{ site.url }}/images/Blue-Green-2.png){:style="margin:auto; width:50%"}
+![Blue-Green](/images/Blue-Green-2.png)
