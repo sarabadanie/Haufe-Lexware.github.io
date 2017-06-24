@@ -17,4 +17,8 @@ So what most developers do is create two parallel environments and they call the
 ### Blue-Green Deployment on Azure
 Depending on your workload there are different ways of doing such deployment on Azure. One of the more common ways of doing such deployment on Azure was to use "Cloud Services" (which is a PaaS service). Beside blue-green deployment Cloud Service would also bring you the possibility to autoscale your virtual machines at ease. So what was the problem with it? Cloud Service is a classic service which also uses the old Azure Service Manager API. Cloud Service is still available on Azure and can be used but Microsoft strongly recommends against using it because soon or late they are going to get rid of Azure Service Manager API. 
 
-Instead Microsoft suggests the use of Azure Resource Manager (ARM) API but what is an alternative to Cloud Service on ARM? Depending on your code and resources you could use App Service as well as Service Fabric on Azure. but today in this blog post we do blue-green deployment using VM Scale Sets. This way you can use Virtual Machines hosting your code and have the possibility to auto scale based on specific rules. 
+Instead Microsoft suggests the use of Azure Resource Manager (ARM) API but what is an alternative to Cloud Service on ARM? Depending on your code and resources you could use App Service as well as Service Fabric on Azure. but today in this blog post we do blue-green deployment using VM Scale Sets. This way you can use Virtual Machines hosting your code and have the possibility to auto scale based on specific rules. These rules are based on the usage of CPU, memory, and etc. and trigger a scale-up or down when the usage is too high or low. (In this blog post we are not focusing much on the auto-scaling rules because that is not the main question for many but we focus mainly on the whole architecture and code).
+
+### Blue-Green Architecture on Azure Resource Manager
+
+
