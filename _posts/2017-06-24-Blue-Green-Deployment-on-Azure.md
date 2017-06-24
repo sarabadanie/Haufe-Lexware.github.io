@@ -37,3 +37,53 @@ Here are the steps we are going to take:
 
 >To deploy the green or blue resource group you need to host/install your new code on a VM, generlize the VM, shut it down, and then provide a reference to the image in the code which comes in this post. 
 
+### Deploy the Frontend Resource Group
+The code below needs to be executed only once and not with every new code deployment:
+
+```
+#Create an application gateway in the frontend resource group which has a backend address pool 
+#with static IP addresses pointing to the backend resource groups (This is a one-time execution and not part of the automation)
+
+$Credential = Get-Credential
+Add-AzureRmAccount -Credential $Credential
+Select-AzureRmSubscription -SubscriptionId "Put your subscription ID here"
+
+$frontendrg = "Frontend-P-RG"
+$loc = "West Europe"
+$vnetname = "bgvnet"
+
+New-AzureRmResourceGroup -Name $frontendrg -Location $loc -Force;
+
+$subnetMain = New-AzureRmVirtualNetworkSubnetConfig -Name "main" -AddressPrefix 10.0.0.0/24
+$subnetGreen = New-AzureRmVirtualNetworkSubnetConfig -Name "green" -AddressPrefix 10.0.1.0/24
+$subnetAppGW = New-AzureRmVirtualNetworkSubnetConfig -Name "appgw" -AddressPrefix 10.0.2.0/24
+
+$vnet = New-AzureRmVirtualNetwork -Name $vnetname -ResourceGroupName $frontendrg -Location $loc -AddressPrefix 10.0.0.0/8 -Subnet $subnetGreen,$subnetMain,$subnetAppGW
+
+$subnetGreen=$vnet.Subnets[0]
+$subnetMain=$vnet.Subnets[1]
+$subnetAppGW=$vnet.Subnets[2]
+
+$publicip = New-AzureRmPublicIpAddress -ResourceGroupName $frontendrg -name publicIP01 -location $loc -AllocationMethod Dynamic
+
+$gipconfig = New-AzureRmApplicationGatewayIPConfiguration -Name gatewayIP01 -Subnet $subnetAppGW
+
+$pool = New-AzureRmApplicationGatewayBackendAddressPool -Name pool01 -BackendIPAddresses 10.0.0.5
+
+$poolSetting01 = New-AzureRmApplicationGatewayBackendHttpSettings -Name "besetting01" -Port 80 -Protocol Http -CookieBasedAffinity Disabled -RequestTimeout 120
+
+$fp = New-AzureRmApplicationGatewayFrontendPort -Name frontendport01  -Port 80
+
+$fipconfig = New-AzureRmApplicationGatewayFrontendIPConfig -Name fipconfig01 -PublicIPAddress $publicip
+
+$listener = New-AzureRmApplicationGatewayHttpListener -Name listener01 -Protocol Http -FrontendIPConfiguration $fipconfig -FrontendPort $fp
+
+$rule = New-AzureRmApplicationGatewayRequestRoutingRule -Name rule01 -RuleType Basic -BackendHttpSettings $poolSetting01 -HttpListener $listener -BackendAddressPool $pool
+
+$sku = New-AzureRmApplicationGatewaySku -Name Standard_Small -Tier Standard -Capacity 2
+
+$appgw = New-AzureRmApplicationGateway -Name bgappgw -ResourceGroupName $frontendrg -Location $loc -BackendAddressPools $pool -BackendHttpSettingsCollection $poolSetting01 -FrontendIpConfigurations $fipconfig  -GatewayIpConfigurations $gipconfig -FrontendPorts $fp -HttpListeners $listener -RequestRoutingRules $rule -Sku $sku
+```
+
+### Deploy the Green Resource Group
+The code 
