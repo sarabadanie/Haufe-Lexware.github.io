@@ -173,4 +173,33 @@ $vmss = New-AzureRmVmssConfig -Location $loc -SkuCapacity $numberofnodes -SkuNam
 New-AzureRmVmss -ResourceGroupName $greenrg -Name $vmssName -VirtualMachineScaleSet $vmss -Verbose;
 ```
 
+### Swap between the Green and Blue Environments
+The code below will update the backend pool in the frontend Application Gateway to point to the new green resource group load balancer:
 
+```
+#The section below updates the application gateway in the frontend resource group with the new IP address
+
+$Credential = Get-Credential
+
+Add-AzureRmAccount -Credential $Credential
+
+Select-AzureRmSubscription -SubscriptionId "Put your subscription ID here"
+
+$frontendrg = "Frontend-P-RG"
+$LBFrontendNewPrivateIPAddress = "10.0.0.5" #This is the IP address of the frontend load balancer in the new resource group. This is going to be the new green.
+$LBFrontendOldPrivateIPAddress = "10.0.0.6" #This is the IP address of the frontend load balancer in the old resource group. 
+
+$frontendappgw = Get-AzureRmApplicationGateway -Name "bgappgw" -ResourceGroupName $frontendrg
+
+$frontendappgw | Set-AzureRmApplicationGatewayBackendAddressPool -Name pool01 -BackendIPAddresses $LBFrontendOldPrivateIPAddress,$LBFrontendNewPrivateIPAddress
+
+Set-AzureRmApplicationGateway -ApplicationGateway $frontendappgw
+
+$frontendappgw = Get-AzureRmApplicationGateway -Name "bgappgw" -ResourceGroupName $frontendrg
+
+$frontendappgw | Set-AzureRmApplicationGatewayBackendAddressPool -Name pool01 -BackendIPAddresses $LBFrontendNewPrivateIPAddress
+
+Set-AzureRmApplicationGateway -ApplicationGateway $frontendappgw
+```
+
+Once you run the code above the traffic incoming to your frontend Application Gateway will slowly redirect the traffic to the new resource group. It is very seamless and there is absolutely zero downtime. In case you have any questions in understanding any parts of the code, please let me know in the comments. 
